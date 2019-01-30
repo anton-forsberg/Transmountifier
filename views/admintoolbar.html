@@ -1,0 +1,16 @@
+<div ng-if="$root.AdminMode">
+  <md-toolbar>
+      <div class="md-toolbar-tools">
+        <md-checkbox aria-label="Edit mode" ng-model="$root.EditMode" class="green">
+            <md-icon md-font-set="material-icons">mode_edit</md-icon>
+        </md-checkbox>
+        <span flex></span>
+            <md-button aria-label="Save" ng-if="vm.save" class="md-icon-button" ng-click="vm.save()">
+            <md-icon md-font-set="material-icons">save</md-icon>
+        </md-button>
+        <md-button aria-label="Add" ng-if="vm.add" class="md-icon-button" ng-click="vm.add()">
+            <md-icon md-font-set="material-icons">add_circle_outline</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+</div> 

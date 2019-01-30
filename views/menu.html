@@ -1,0 +1,22 @@
+<md-nav-bar md-selected-nav-item="vm.CurrentNavItem" nav-bar-aria-label="navigation links">
+    <md-nav-item md-nav-href="#/mounts" name="/mounts">Mounts</md-nav-item>
+    <md-nav-item md-nav-href="#/colors" name="/colors">Colors</md-nav-item>
+    <span flex></span>
+    <md-menu md-position-mode="target-right bottom">
+        <md-button aria-label="Open dots menu" class="md-menu-opener md-icon-button" ng-click="$mdOpenMenu($event)">
+            <md-icon md-font-set="material-icons">menu</md-icon>
+        </md-button>
+        <md-menu-content width="4">
+            <md-menu-item>
+                <md-button href="#/login" ng-click="$mdMenu.hide()">
+                    <md-icon md-font-set="material-icons">lock_outline</md-icon> Administration
+                </md-button>
+            </md-menu-item>
+            <md-menu-item>
+                <md-button href="#/about" ng-click="$mdMenu.hide()">
+                    <md-icon md-font-set="material-icons">help_outline</md-icon> About
+                </md-button>
+            </md-menu-item>
+        </md-menu-content>
+    </md-menu>
+</md-nav-bar>

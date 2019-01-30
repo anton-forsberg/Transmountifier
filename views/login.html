@@ -1,0 +1,48 @@
+<transmountifier-admin-toolbar></transmountifier-admin-toolbar>
+<md-content class="md-padding">
+    <md-button ng-if="!$root.CurrentUser" class="md-raised md-primary" ng-click="vm.ShowLogin()">
+        <md-icon md-font-set="material-icons">lock_open</md-icon> Log in
+    </md-button>
+    <md-button ng-if="$root.CurrentUser" class="md-raised md-primary" ng-click="vm.Logout()">
+        <md-icon md-font-set="material-icons">lock_outline</md-icon> Log out
+    </md-button>
+
+    <md-card ng-if="$root.CurrentUser">
+        <md-card-title>
+            <md-card-title-text>
+                <span class="md-headline">Logged in as</span>
+                <span class="md-subhead">{{$root.CurrentUser.email}}</span>
+            </md-card-title-text>
+        </md-card-title>
+    </md-card>
+</md-content>
+
+<script type="text/ng-template" id="login-dialog.tmpl.html">
+    <md-content class="md-padding">
+        <form ng-cloak name="loginForm">
+            <md-input-container class="md-block">
+                <label>Email</label>
+                <input md-maxlength="60" required md-no-asterisk name="email" type="email" ng-model="vm.Email">
+                <div ng-messages="loginForm.email.$error">
+                    <div ng-message="required">This is required.</div>
+                    <div ng-message="email">This is not a valid email.</div>
+                </div>
+            </md-input-container>
+            <md-input-container class="md-block">
+                <label>Password</label>
+                <input md-maxlength="60" required md-no-asterisk name="password" type="password" ng-model="vm.Password">
+                <div ng-messages="loginForm.password.$error">
+                    <div ng-message="required">This is required.</div>
+                </div>
+            </md-input-container>
+            <md-dialog-actions layout="row">
+                <md-button ng-click="vm.Cancel()">
+                    Cancel
+                </md-button>
+                <md-button ng-disabled="!loginForm.$valid" ng-click="vm.Login()">
+                    Login
+                </md-button>
+            </md-dialog-actions>
+        </form>
+    </md-content>
+</script>

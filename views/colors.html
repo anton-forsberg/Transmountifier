@@ -1,0 +1,88 @@
+<transmountifier-admin-toolbar add="vm.UpdateColor()"></transmountifier-admin-toolbar>
+<md-content layout="column">
+    <div class="clear-bottom" layout-xs="row">
+        <md-button flex class="md-raised md-primary" ng-click="vm.ApplyFilter()">
+            <md-icon md-font-set="material-icons">filter_list</md-icon> Apply filter to mounts
+        </md-button>
+    </div>
+    <div class="tmount-colors scroll-y" flex>
+        <md-grid-list
+        class="colors-list"
+        md-cols-xs="3"
+        md-cols-sm="5" 
+        md-cols-md="8" 
+        md-cols-gt="12"
+        md-cols="10"
+        md-row-height="1:1"
+        md-gutter="10px" >
+            <div layout="row" layout-sm="column" layout-align="space-around" ng-if="!vm.Colors.length">
+                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            </div>
+            <md-grid-tile 
+                ng-repeat="color in vm.Colors | orderBy: 'order' track by color.id"
+                class="color"
+                ng-click="vm.SelectColor(color)"
+                ng-class="{selected: vm.SelectedColors.getItemByValue('id', color.id) != undefined}"
+                ng-style="{'background-color': color.value}">
+                <div class="tmount-tile-edit-container">
+                    <md-button class="md-fab md-super-small tmount-tile-edit" ng-if="$root.AdminMode" aria-label="Edit color" ng-click="vm.UpdateColor(color, $event)">
+                        <md-icon md-font-set="material-icons">mode_edit</md-icon>
+                    </md-button>
+                    <md-button class="md-fab md-super-small color-selected" aria-label="Color is selected">
+                        <md-icon md-font-set="material-icons">check_circle</md-icon>
+                    </md-button>
+                </div>
+                <md-grid-tile-footer>
+                    <h3>{{color.name}}</h3>
+                </md-grid-tile-footer>
+            </md-grid-tile>
+        </md-grid-list>
+    </div>
+</md-content>
+
+<script type="text/ng-template" id="color-dialog.tmpl.html">
+    <md-dialog aria-label="Color">
+        <md-dialog-content class="md-padding">
+            <md-grid-list
+            md-cols="1"
+            md-row-height="1:1">
+                <md-grid-tile class="color" ng-style="{'background-color': vm.Color.value || 'gray'}">
+                    <md-grid-tile-footer>
+                        <h3>{{vm.Color.name || 'New color'}}</h3>
+                    </md-grid-tile-footer>
+                </md-grid-tile>
+            </md-grid-list>
+            <form ng-cloak name="colorForm">
+                <md-input-container class="md-block">
+                    <label>Name</label>
+                    <input md-maxlength="60" required md-no-asterisk name="name" type="text" ng-model="vm.Color.name">
+                    <div ng-messages="colorForm.name.$error">
+                        <div ng-message="required">This is required.</div>
+                    </div>
+                </md-input-container>
+                <md-input-container class="md-block">
+                    <label>Value</label>
+                    <input md-maxlength="60" required md-no-asterisk name="value" type="text" ng-model="vm.Color.value">
+                    <div ng-messages="colorForm.value.$error">
+                        <div ng-message="required">This is required.</div>
+                    </div>
+                </md-input-container>
+                <md-input-container class="md-block">
+                    <label>Order</label>
+                    <input md-no-asterisk type="number" ng-model="vm.Color.order">
+                </md-input-container>
+                <md-dialog-actions layout="row">
+                    <md-button ng-click="vm.Cancel()">
+                        Cancel
+                    </md-button>
+                    <md-button ng-if="vm.Color.id" ng-click="vm.Delete()">
+                        Delete
+                    </md-button>
+                    <md-button ng-disabled="!colorForm.$valid" ng-click="vm.Add()">
+                        {{vm.Color.id ? 'Save' : 'Add'}}
+                    </md-button>
+                </md-dialog-actions>
+            </form>
+        </md-dialog-content>
+    </md-dialog>
+</script>

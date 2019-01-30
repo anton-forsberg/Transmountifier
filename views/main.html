@@ -1,0 +1,141 @@
+<transmountifier-admin-toolbar></transmountifier-admin-toolbar>
+<md-content flex layout="column">
+    <div>
+        <div class="md-padding" ng-show="vm.FilterColors.length">
+            <md-grid-list
+            md-cols-xs="10"
+            md-cols-sm="16" 
+            md-cols-md="20" 
+            md-cols-gt="25"
+            md-cols="30"
+            md-row-height="1:1"
+            md-gutter="10px" >
+                <md-grid-tile 
+                    ng-repeat="color in vm.FilterColors track by color.id"
+                    class="color-filter"
+                    ng-style="{'background-color': color.value}" ng-click="vm.RemoveFilter($index)">
+                    <md-tooltip>{{::color.name}}</md-tooltip>
+                </md-grid-tile>
+            </md-grid-list>
+        </div>
+        <div layout="row">
+            <span flex class="md-padding">
+                <md-autocomplete placeholder="Search..." 
+                                 md-selected-item="vm.SelectedItem" 
+                                 md-search-text="vm.SearchText" 
+                                 md-delay="400"
+                                 md-search-text-change="vm.FilterMounts()"
+                                 md-selected-item-change="vm.FilterMounts()"
+                                 md-items="mount in vm.SearchMounts()" 
+                                 md-item-text="mount.name">
+                    <span md-highlight-text="vm.SearchText">{{::mount.name}}</span>
+                </md-autocomplete>
+            </span>
+            <span class="filter-checkboxes md-padding">
+                <md-checkbox aria-label="Include Alliance" 
+                             ng-model="vm.IncludeAlliance" 
+                             ng-change="vm.FilterMounts()">
+                    <img class="check-box-icon" src="images/alliance.png">
+                </md-checkbox>
+                <md-checkbox aria-label="Include Horde" 
+                             ng-model="vm.IncludeHorde" 
+                             ng-change="vm.FilterMounts()">
+                    <img class="check-box-icon" src="images/horde.png">
+                </md-checkbox>
+            </span>
+        </div>
+        <div layout="row" class="md-padding" layout-align="space-around" ng-if="!vm.DataLoaded">
+            <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+        </div>
+    </div>
+    <div flex class="tmount-main scroll-y" scroll-to-bottom="vm.BottomScroll">
+        <md-grid-list
+        class="mount-list"
+        md-cols-xs="2"
+        md-cols-sm="4" 
+        md-cols-md="6" 
+        md-cols-gt="8"
+        md-cols="10"
+        md-row-height="1:1"
+        md-gutter="10px" >
+            <md-grid-tile 
+                ng-repeat="mount in vm.Mounts | limitTo: vm.MountLimit track by mount.spellId"
+                class="mount"
+                ng-click="vm.UpdateMount(mount, $event, false)">
+                <img fade-in-load ng-src="{{vm.GetMountImage(mount)}}">
+                <div class="grid-tile-list">
+                    <div class="grid-tile-list-item color-preview" ng-repeat="color in mount.colors track by $index" ng-style="{'background-color': color.value}">
+                        <md-tooltip>{{::color.name}}</md-tooltip>
+                    </div>
+                </div>
+                <div class="tmount-tile-edit-container">
+                    <md-button class="md-fab md-mini tmount-tile-edit" ng-if="$root.AdminMode" aria-label="Eat cake" ng-click="vm.UpdateMount(mount, $event, $root.AdminMode)">
+                        <md-icon md-font-set="material-icons">mode_edit</md-icon>
+                    </md-button>
+                </div>
+                <a class="wowhead-link" ng-href="http://www.wowhead.com/item={{mount.itemId}}" stop-propagation target="_blank">
+                    <img src="http://www.theabandonedones.com/images/wowhead-1.png">
+                </a>
+                <md-grid-tile-footer>
+                    <h3>{{::mount.name}}</h3>
+                </md-grid-tile-footer>
+            </md-grid-tile>
+        </md-grid-list>
+    </div>
+</md-content>
+
+<script type="text/ng-template" id="mount-dialog.tmpl.html">
+    <md-dialog aria-label="Mount">
+        <md-dialog-content class="md-padding">
+            <div class="image-container">
+                <div class="grid-tile-list">
+                    <div class="grid-tile-list-item color-preview large" ng-repeat="color in vm.mount.colors track by color.id" ng-style="{'background-color': color.value}">
+                        <md-tooltip>{{::color.name}}</md-tooltip>
+                    </div>
+                </div>
+                <img ng-src="{{vm.mount.imageurl || vm.GetIcon(vm.mount.icon)}}"/>
+                <a class="wowhead-link large" ng-href="http://www.wowhead.com/item={{vm.mount.itemId}}" stop-propagation target="_blank">
+                    <img src="http://www.theabandonedones.com/images/wowhead-1.png">
+                </a>
+                <div class="image-footer">
+                    <span>{{::vm.mount.name || 'New mount'}} <md-icon class="copy-button" ngclipboard data-clipboard-text="{{vm.mount.name}}" md-font-set="material-icons">content_copy<md-tooltip>Copy to clipboard</md-tooltip></md-icon></span>
+                </div>
+            </div>
+            <form ng-cloak name="mountForm" ng-if="vm.edit">
+                <md-input-container class="md-block">
+                    <label>Image url</label>
+                    <input md-no-asterisk name="imageurl" type="text" ng-model="vm.mount.imageurl">
+                </md-input-container>
+                <md-switch md-no-ink name="horde" ng-model="vm.mount.isAvailableToHorde" aria-label="Available to horde">
+                    Available to horde
+                </md-switch>
+                <md-switch md-no-ink name="alliance" ng-model="vm.mount.isAvailableToAlliance" aria-label="Available to alliance">
+                    Available to alliance
+                </md-switch>
+                <md-chips ng-model="vm.SelectedColors" md-autocomplete-snap md-require-match="true">
+                    <md-autocomplete
+                        md-selected-item="vm.SelectedColor"
+                        md-search-text="vm.SearchText"
+                        md-items="color in vm.colors | filter: {name: vm.SearchText}"
+                        md-item-text="color.name"
+                        placeholder="Search for a color">
+                        <span class="color-preview" ng-style="{'background-color': color.value}"></span>
+                        <span md-highlight-text="vm.SearchText">{{::color.name}}</span>
+                    </md-autocomplete>
+                    <md-chip-template>
+                        <span class="color-preview" ng-style="{'background-color': $chip.value}"></span>
+                        {{::$chip.name}}
+                    </md-chip-template>
+                </md-chips>
+                <md-dialog-actions layout="row">
+                    <md-button ng-click="vm.Cancel()">
+                        Cancel
+                    </md-button>
+                    <md-button ng-disabled="!mountForm.$valid" ng-click="vm.Add()">
+                        {{vm.mount.spellId ? 'Save' : 'Add'}}
+                    </md-button>
+                </md-dialog-actions>
+            </form>
+        </md-content>
+    </md-dialog>
+</script>
